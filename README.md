@@ -7,7 +7,7 @@ Using the #NAIL predictive model, there should be either 1 or 2 main sentence st
 1) find the first main stress by finding the final content word in the sentence.
 2) find the second main stress by starting at the beginning of the sentence and moving left until you find one of these (in this order). If you don't find one, move to the next thing to look for. If you find none of them, then there is only one main stress in the sentnece.
 
-- # cardinal number (three), ordinal number (third), order words (next/last/previous/following), superlatives (most/ADJ-est)
+- `#` cardinal number (three), ordinal number (third), order words (next/last/previous/following), superlatives (most/ADJ-est)
 - N Noun
 - A Adverb, which modifies a verb or a whole phrase
 - I Imperative verb (command form)
