@@ -4,6 +4,8 @@ from telegram.ext import MessageHandler, Filters
 import os
 import logging
 
+from parse import create_POS_tags as POS
+
 from flask import Flask, request, Response
 
 app = Flask(__name__)
@@ -20,21 +22,26 @@ logger.addHandler(handler)
 def start(bot, update):
     bot.sendMessage(chat_id=update.message.chat_id, text='send me a sentence and I\'ll send you the stress!')
 
-def echo(bot, update):
+def send_tags(bot, update):
 #do python parsing and tagging and predicting here
 
+    bot.sendMessage(chat_id=update.message.chat_id, text='analyzing the sentence. Please standby...')
+
     text = update.message.text
-    bot.sendMessage(chat_id=update.message.chat_id, text=text)
+
+    parsedText = POS(unicode(text))
+
+    bot.sendMessage(chat_id=update.message.chat_id, text=parsedText)
 
 updater = Updater(token=os.environ['API-TOKEN'])
 
 dispatcher = updater.dispatcher
 
 start_handler = CommandHandler('start', start)
-echo_handler = MessageHandler([Filters.text], echo)
+tags_handler = MessageHandler([Filters.text], send_tags)
 
 dispatcher.add_handler(start_handler)
-dispatcher.add_handler(echo_handler)
+dispatcher.add_handler(tags_handler)
 
 updater.start_polling()
 
