@@ -1,16 +1,8 @@
-from spacy.en import English
+import nltk
+from nltk import word_tokenize
 
 def create_POS_tags(sentence):
 
-    parser = English()
-    parsedSentence = parser(sentence)
+    parsedSentence = word_tokenize(sentence)
 
-    taggedArray = []
-
-    for token in parsedSentence:
-        taggedArray.append({
-            'original': token.orth_,
-            'pos': token.tag_
-        })
-
-    return taggedArray
+    return nltk.pos_tag(parsedSentence)
