@@ -47,10 +47,6 @@ def send_tags(bot, update):
 
             sentence_array[stress_index] = '<b>' + sentence_array[stress_index].upper() + '</b>'
 
-    else:
-
-        continue
-
     message = ' '.join(sentence_array)
 
     bot.sendMessage(chat_id=update.message.chat_id, parse_mode='HTML', text=message)
