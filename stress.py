@@ -25,7 +25,7 @@ def start(bot, update):
 def send_tags(bot, update):
 #do python parsing and tagging and predicting here
 
-    bot.sendMessage(chat_id=update.message.chat_id, parse_mode='HTML', text='analyzing the <b><i>sentence</i></b>. Please standby...')
+    bot.sendMessage(chat_id=update.message.chat_id, parse_mode='HTML', text='analyzing the <b>sentence</b>. Please standby...')
 
     text = update.message.text
 
