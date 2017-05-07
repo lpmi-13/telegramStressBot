@@ -5,6 +5,7 @@ import os
 import logging
 
 from parse import create_POS_tags as POS
+from nail import predict_stress
 
 from flask import Flask, request, Response
 
@@ -23,15 +24,36 @@ def start(bot, update):
     bot.sendMessage(chat_id=update.message.chat_id, text='send me a sentence and I\'ll send you the stress!')
 
 def send_tags(bot, update):
-#do python parsing and tagging and predicting here
 
-    bot.sendMessage(chat_id=update.message.chat_id, parse_mode='HTML', text='analyzing the <b>sentence</b>. Please standby...')
+    bot.sendMessage(chat_id=update.message.chat_id, parse_mode='HTML', text='analyzing the sentence. Please standby...')
 
     text = update.message.text
 
+    # get the POS tags for the text input
     parsedText = POS(unicode(text))
 
-    bot.sendMessage(chat_id=update.message.chat_id, text=parsedText)
+    # process the text with the #NAIL approach
+    stress_pattern = predict_stress(parsedText)
+
+    sentence_array = []
+
+    for item in parsedText:
+
+        sentence_array.append(item[0])
+
+    if stress_pattern != None:
+
+        for stress_index in stress_pattern:
+
+            sentence_array[stress_index] = '<b>' + sentence_array[stress_index].upper() + '</b>'
+
+    else:
+
+        continue
+
+    message = ' '.join(sentence_array)
+
+    bot.sendMessage(chat_id=update.message.chat_id, parse_mode='HTML', text=message)
 
 updater = Updater(token=os.environ['API-TOKEN'])
 

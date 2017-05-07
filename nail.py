@@ -69,20 +69,21 @@ def predict_stress(array):
     iterate through the array and use the #NAIL pattern to first find the anchor stress (last content word),
     then find the preceding stress, if there is one. Then return it all as an array with the two stresses marked
     '''
-    print array
+
+    stress_array = []
 
     last_content_word = find_anchor(array)
 
     if last_content_word:
 
-        print 'found last content word at position: ' + str(last_content_word)
+        stress_array.append(last_content_word)
 
         # '#'
         check_for_number = find_number(array)
 
         if check_for_number and check_for_number != last_content_word:
 
-            print 'found number word at position: ' + str(check_for_number)
+            stress_array.append(check_for_number)
 
         else:
 
@@ -91,7 +92,7 @@ def predict_stress(array):
 
             if check_for_noun and check_for_noun != last_content_word:
 
-                print 'found noun at position: ' + str(check_for_noun)
+                stress_array.append(check_for_noun)
 
             else:
 
@@ -100,7 +101,7 @@ def predict_stress(array):
 
                 if check_for_adverb and check_for_adverb != last_content_word:
 
-                    print 'found adverb at position: ' + str(check_for_adverb)
+                    stress_array.append(check_for_adverb)
 
                 else:
 
@@ -109,7 +110,7 @@ def predict_stress(array):
 
                     if check_for_imperative or check_for_imperative == 0 and check_for_imperative != last_content_word:
 
-                        print 'found imperative at position: ' + str(check_for_imperative)
+                        stress_array.append(check_for_imperative)
 
                     else:
 
@@ -118,7 +119,7 @@ def predict_stress(array):
 
                         if check_for_loud_function_word and check_for_loud_function_word != last_content_word:
 
-                            print 'found loud function word at position: ' + str(check_for_loud_function_word)
+                            stress_array.append(check_for_loud_function_word)
 
                         else:
 
@@ -126,11 +127,12 @@ def predict_stress(array):
 
                             if check_for_content_word and check_for_content_word != last_content_word:
 
-                                print 'found second to last content word at position: ' + str(check_for_content_word)
+                                stress_array.append(check_for_content_word)
 
                             else:
 
-                                print 'only one major stress in this sentence.'
+                                return
+        return stress_array
 
     else:
         print 'sentence too weird to predict stress.'
