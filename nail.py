@@ -1,64 +1,139 @@
+# These are the POS tags used by the Penn Treebank coding system
+# https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
+
+#CC	Coordinating conjunction
+#CD	Cardinal number
+#DT	Determiner
+#EX	Existential there
+#FW	Foreign word
+#IN	Preposition or subordinating conjunction
+#JJ	Adjective
+#JJR	Adjective, comparative
+#JJS	Adjective, superlative
+#LS	List item marker
+#MD	Modal
+#NN	Noun, singular or mass
+#NNS	Noun, plural
+#NNP	Proper noun, singular
+#NNPS	Proper noun, plural
+#PDT	Predeterminer
+#POS	Possessive ending
+#PRP	Personal pronoun
+#PRP$	Possessive pronoun
+#RB	Adverb
+#RBR	Adverb, comparative
+#RBS	Adverb, superlative
+#RP	Particle
+#SYM	Symbol
+#TO	to
+#UH	Interjection
+#VB	Verb, base form
+#VBD	Verb, past tense
+#VBG	Verb, gerund or present participle
+#VBN	Verb, past participle
+#VBP	Verb, non-3rd person singular present
+#VBZ	Verb, 3rd person singular present
+#WDT	Wh-determiner
+#WP	Wh-pronoun
+#WP$	Possessive wh-pronoun
+#WRB	Wh-adverb
+
+# Searching for the anchor stress, and also for the other content word if none of '#NAIL' found
 CONTENT_WORD_TAGS = {'JJ', 'JJR', 'JJS', 'NN', 'NNS', 'NNP', 'NNPS', 'RB', 'RBR', 'RBS', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ'}
 
+# Searching for the '#' in #NAIL
 NUMBER_WORD_TAGS = {'CD', 'JJS', 'RBS'}
-
 #this is a subset of the 'number' words, and should be a not too huge list of order words
 NUMBER_ORDER_WORDS = {'next', 'last', 'previous', 'following'}
 
+# Searching for the 'N' in #NAIL
 NOUN_WORD_TAGS = {'NN', 'NNS', 'NNP', 'NNPS'}
 
+# Searching for the 'A' in #NAIL
 ADVERB_WORD_TAGS = {'RB', 'RBR'}
 
-#since this tag is used for imperatives, infinitives and old school subjunctives, there might need to be some custom context checking to see if the encountered form is in fact an imperative
+'''
+since this tag is used for imperatives, infinitives and old school subjunctives, there might need to be some custom context checking to see if the encountered form is in fact an imperative
+'''
+# Searching for the 'I' in #NAIL
 IMPERATIVE_VERB_TAG = 'VB'
 
-#since spacy wants to POS tag negation as an adverb (which it technically is, but would be more helpful if there were an easy way to distinguish it), the words are just going to be hardcoded as words here, and the variable name should reflect this
+'''
+since the Penn Tree bank decided to POS tag negation as an adverb (which it technically is, but would be more helpful if there were an easy way to distinguish it), the words are just going to be hardcoded as words here, and the variable name should reflect this
+'''
+# Searching for the 'L' in #NAIL
 LOUD_FUNCTION_WORDS = {'no', 'not', 'n\'t'}
 
 def predict_stress(array):
-   #iterate through the array and use the #NAIL pattern to first find the anchor stress (last content word), then find the preceding stress, if there is one. Then return it all as an array with the two stress marked
-
+    '''
+    iterate through the array and use the #NAIL pattern to first find the anchor stress (last content word),
+    then find the preceding stress, if there is one. Then return it all as an array with the two stresses marked
+    '''
     print array
 
     last_content_word = find_anchor(array)
 
     if last_content_word:
+
         print 'found last content word at position: ' + str(last_content_word)
 
-    
+        # '#'
+        check_for_number = find_number(array)
 
-    check_for_number = find_number(array)
+        if check_for_number and check_for_number != last_content_word:
 
-    if check_for_number and check_for_number != last_content_word:
-        print 'found number word at position: ' + str(check_for_number)
+            print 'found number word at position: ' + str(check_for_number)
 
-    check_for_noun = find_noun(array)
+        else:
 
-    if check_for_noun and check_for_noun != last_content_word:
-        print 'found noun at position: ' + str(check_for_noun)
+            # 'N'
+            check_for_noun = find_noun(array)
 
-    check_for_adverb = find_adverb(array)
+            if check_for_noun and check_for_noun != last_content_word:
 
-    if check_for_adverb and check_for_adverb != last_content_word:
-        print 'found adverb at position: ' + str(check_for_adverb)
+                print 'found noun at position: ' + str(check_for_noun)
 
+            else:
 
-#####still not sure how to approach this, since 'imperative tagging
-#####will require context-based processing, possibly bi/tri-grams
-#    check_for_imperative = find_imperative(array)
+                # 'A'
+                check_for_adverb = find_adverb(array)
 
-#    if check_for_imperative:
-#        print 'found imperative at position: ' + str(check_for_imperative)
+                if check_for_adverb and check_for_adverb != last_content_word:
 
-    check_for_loud_function_word = find_loud_function_word(array)
+                    print 'found adverb at position: ' + str(check_for_adverb)
 
-    if check_for_loud_function_word and check_for_loud_function_word != last_content_word:
-        print 'found loud function word at position: ' + str(check_for_loud_function_word)
+                else:
 
-    check_for_content_word = find_other_content_word(array)
+                    # 'I'
+                    check_for_imperative = find_imperative(array)
 
-    if check_for_content_word and check_for_content_word != last_content_word:
-        print 'found second to last content word at position: ' + str(check_for_content_word)
+                    if check_for_imperative or check_for_imperative == 0 and check_for_imperative != last_content_word:
+
+                        print 'found imperative at position: ' + str(check_for_imperative)
+
+                    else:
+
+                        # 'L'
+                        check_for_loud_function_word = find_loud_function_word(array)
+
+                        if check_for_loud_function_word and check_for_loud_function_word != last_content_word:
+
+                            print 'found loud function word at position: ' + str(check_for_loud_function_word)
+
+                        else:
+
+                            check_for_content_word = find_other_content_word(array)
+
+                            if check_for_content_word and check_for_content_word != last_content_word:
+
+                                print 'found second to last content word at position: ' + str(check_for_content_word)
+
+                            else:
+
+                                print 'only one major stress in this sentence.'
+
+    else:
+        print 'sentence too weird to predict stress.'
 
 def find_anchor(array):
 
@@ -98,22 +173,29 @@ def find_adverb(array):
     else:
         return array.index(adverb)
 
-#skeleton of this function
-#def find_imperative(array):
+# this function could most definitely be better optimized
+def find_imperative(array):
 
-#    imperative = next((x for x in array if x[1] == 'VB'), None)
+    imperative = next((x for x in array if x[1] == 'VB'), None)
 
-#    if imperative == None:
-#        return None
-#    else:
-#        adverb_position = array.index(imperative)
+    if imperative == None:
+        return None
+    else:
+        possible_imperative_position = array.index(imperative)
 
-#        word_before_position = array[adverb_position - 1]
+        if possible_imperative_position == 0:
 
-#        if word_before_position[0] and word_before_position[0].lower() != 'to':
-#            return adverb_position
-#        else:
-#            return None
+            return possible_imperative_position
+
+        else:
+
+            word_before_possible_imperative_position = array[possible_imperative_position - 1]
+
+            # checking to see that the identified word is not an infinitive, following a modal, or matched with a subject
+            if word_before_possible_imperative_position[0] and word_before_possible_imperative_position[0].lower() != 'to' and word_before_possible_imperative_position[1] != 'MD' and word_before_possible_imperative_position[1] != 'PRP' and word_before_possible_imperative_position[1] not in NOUN_WORD_TAGS:
+                return possible_imperative_position
+            else:
+                return None
 
 def find_loud_function_word(array):
 
